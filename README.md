@@ -58,24 +58,6 @@ Language: Python 3.x
 
 --------------------------------------------------
 
-Project Structure
-
-ai-appointment-scheduler/
-│
-├── app/
-│   ├── main.py          # API endpoints
-│   ├── ocr.py           # OCR and text cleaning
-│   ├── extractor.py     # Entity extraction logic
-│   ├── normalizer.py    # Date & time normalization
-│   ├── guardrails.py    # Ambiguity detection
-│   ├── schemas.py       # Pydantic models
-│
-├── requirements.txt
-├── README.md
-└── demo.mp4             # Screen recording
-
---------------------------------------------------
-
 Setup Instructions
 
 1. Clone the Repository
@@ -99,16 +81,6 @@ uvicorn app.main:app --reload
 5. Open Swagger UI (Local)
 
 http://127.0.0.1:8000/docs
-
---------------------------------------------------
-
-Public Demo (ngrok)
-
-Base URL
-https://cognoscitive-exudative-tomiko.ngrok-free.dev
-
-Swagger UI
-https://cognoscitive-exudative-tomiko.ngrok-free.dev/docs
 
 --------------------------------------------------
 
