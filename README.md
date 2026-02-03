@@ -1,17 +1,27 @@
 AI-Powered Appointment Scheduler Assistant (Backend)
 
 Overview
+This project is a backend service that converts natural language or document-based
+appointment requests into structured, timezone-aware scheduling data. The system
+safely handles ambiguity and avoids incorrect scheduling by enforcing validation
+rules instead of guessing missing information.
 
-This project is a backend service that parses natural language or document-based appointment requests and converts them into structured scheduling data.
+The service supports both typed text and image-based inputs using OCR and follows
+a modular processing pipeline.
 
-The system supports:
+--------------------------------------------------
 
-Typed text inputs
-Image inputs (via OCR)
-Entity extraction (date, time, department)
-Date/time normalization (Asia/Kolkata)
-Guardrails to handle ambiguity safely
+Key Features
 
+- Natural language appointment parsing
+- OCR support for image-based appointment requests
+- Entity extraction (date, time, department)
+- Timezone-aware date and time normalization (Asia/Kolkata)
+- Guardrails to detect ambiguity and missing information
+- Modular FastAPI-based architecture
+- Swagger UI for API testing and demonstration
+
+--------------------------------------------------
 
 Architecture
 
@@ -35,6 +45,7 @@ Guardrails (Ambiguity Detection)
         v
 Final Appointment JSON / Clarification Response
 
+--------------------------------------------------
 
 Tech Stack
 
@@ -45,6 +56,7 @@ Date Parsing: dateparser.search
 Timezone: Asia/Kolkata
 Language: Python 3.x
 
+--------------------------------------------------
 
 Project Structure
 
@@ -62,37 +74,47 @@ ai-appointment-scheduler/
 ├── README.md
 └── demo.mp4             # Screen recording
 
+--------------------------------------------------
 
 Setup Instructions
 
-Clone the Repositry:
+1. Clone the Repository
+
 git clone <github-repo-url>
 cd ai-appointment-scheduler
 
-Create & Activate Virtual Environment (windows):
+2. Create and Activate Virtual Environment (Windows)
+
 python -m venv venv
 venv\Scripts\activate
 
-Install Dependencies:
+3. Install Dependencies
+
 pip install -r requirements.txt
 
-Run the Server:
+4. Run the Server
+
 uvicorn app.main:app --reload
 
-Open Swagger UI (local):
+5. Open Swagger UI (Local)
+
 http://127.0.0.1:8000/docs
 
+--------------------------------------------------
 
-To provide a working backend demo as required, the service can be exposed using ngrok:
+Public Demo (ngrok)
+
+Base URL
 https://cognoscitive-exudative-tomiko.ngrok-free.dev
 
-Swagger UI:
+Swagger UI
 https://cognoscitive-exudative-tomiko.ngrok-free.dev/docs
 
+--------------------------------------------------
 
-API Endpoints (Postman)
+API Endpoints
 
-1. Extract Text from Typed Input:
+1. Extract Text from Typed Input
 
 POST /extract-text/from-text
 
@@ -107,21 +129,24 @@ Response:
   "confidence": 0.9
 }
 
+--------------------------------------------------
+
 2. Extract Text from Image (OCR)
 
 POST /extract-text/from-image
 
 Form Data:
-
 Key: image
 Type: File
 Value: image.jpg
 
-Response
+Response:
 {
   "raw_text": "book dentist next friday at 3 pm",
   "confidence": 0.9
 }
+
+--------------------------------------------------
 
 3. Extract Entities
 
@@ -141,6 +166,8 @@ Response:
   },
   "entities_confidence": 0.9
 }
+
+--------------------------------------------------
 
 4. Normalize Date and Time
 
@@ -162,21 +189,18 @@ Response:
   "normalization_confidence": 0.9
 }
 
+--------------------------------------------------
+
 5. Final Appointment Endpoint (Pipeline + Guardrails)
 
 POST /appointment
 
-This endpoint performs:
-Entity extraction
-Date/time normalization
-Guardrail validation
-
-Valid Request
+Valid Request:
 {
   "raw_text": "Book dentist next Friday at 3pm"
 }
 
-Response
+Response:
 {
   "appointment": {
     "department": "Dentist",
@@ -187,39 +211,49 @@ Response
   "status": "ok"
 }
 
+--------------------------------------------------
 
-Missing Time (Guardrail Triggered)
+Guardrail Examples
+
+Missing Time:
 {
   "raw_text": "Book dentist next Friday"
 }
 
-Response
+Response:
 {
   "status": "needs_clarification",
   "message": "Time could not be determined"
 }
 
-
-Missing Department
+Missing Department:
 {
   "raw_text": "Book next Friday at 3pm"
 }
 
-Response
+Response:
 {
   "status": "needs_clarification",
   "message": "Department is missing or unclear"
 }
 
-The /extract-entities and /normalize endpoints are exposed primarily for modular testing and demonstration; the /appointment endpoint orchestrates the full pipeline with guardrails.
+--------------------------------------------------
 
+Guardrails and Safety
 
-Guardrails & Safety
+The system enforces:
+- Mandatory department
+- Mandatory date
+- Mandatory user-provided time
+- Minimum confidence thresholds
 
-The system prevents incorrect scheduling by enforcing:
+If ambiguity exists, the pipeline exits early and requests clarification instead
+of making assumptions.
 
-Mandatory department
-Mandatory date
-Mandatory user-provided time
-Minimum confidence thresholds
-If ambiguity exists, the pipeline exits early with a clarification request instead of guessing.
+--------------------------------------------------
+
+Notes
+
+- /extract-entities and /normalize endpoints are exposed for modular testing
+- /appointment orchestrates the full pipeline
+- Designed for extensibility and real-world backend demonstrations
